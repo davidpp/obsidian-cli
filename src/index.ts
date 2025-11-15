@@ -9,6 +9,7 @@ import { frontmatterCommand } from './commands/frontmatter';
 import { deleteCommand } from './commands/delete';
 import { listCommand } from './commands/list';
 import { configCommand } from './commands/config';
+import { instructionsCommand } from './commands/instructions';
 
 const program = new Command();
 
@@ -56,10 +57,13 @@ addVaultOption(
     .command('create')
     .description('Create a new note')
     .argument('<path>', 'Note path')
-    .argument('<content>', 'Note content')
-    .option('-f, --frontmatter <json>', 'Frontmatter as JSON string')
+    .argument('[content]', 'Note content (or use --from-file/--stdin)')
+    .option('-f, --from-file <path>', 'Read content from file')
+    .option('--stdin', 'Read content from stdin')
+    .option('--frontmatter <json>', 'Frontmatter as JSON string')
+    .option('--merge-frontmatter', 'Merge frontmatter from source file with --frontmatter option')
 )
-  .action(async (path: string, content: string, options) => {
+  .action(async (path: string, content: string | undefined, options) => {
     await createCommand(path, content, options);
   });
 
@@ -69,7 +73,9 @@ addVaultOption(
     .command('patch')
     .description('Surgically edit a note')
     .argument('<path>', 'Note path')
-    .argument('<content>', 'Content to add/replace')
+    .argument('[content]', 'Content to add/replace (or use --from-file/--stdin)')
+    .option('-f, --from-file <path>', 'Read content from file')
+    .option('--stdin', 'Read content from stdin')
     .option('--append', 'Append to end of note (default)')
     .option('--prepend', 'Prepend to beginning of note')
     .option('--heading <name>', 'Target a specific heading')
@@ -77,7 +83,7 @@ addVaultOption(
     .option('--replace', 'Replace instead of append')
     .option('--delete', 'Delete the target section/line')
 )
-  .action(async (path: string, content: string, options) => {
+  .action(async (path: string, content: string | undefined, options) => {
     await patchCommand(path, content, {
       ...options,
       line: options.line ? parseInt(options.line) : undefined,
@@ -137,6 +143,14 @@ program
   .option('--omnisearch-url <url>', 'Omnisearch base URL')
   .action(async (options) => {
     await configCommand(options);
+  });
+
+// Instructions command
+program
+  .command('instructions')
+  .description('Show concise AI-optimized usage instructions')
+  .action(() => {
+    instructionsCommand();
   });
 
 program.parse();

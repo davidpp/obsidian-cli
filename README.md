@@ -138,27 +138,43 @@ obsidian get "note.md" --vault personal
 ### Create Note
 
 ```bash
-# Create note with content
-obsidian create "2025-11-13-new.md" "# My Note\n\nContent here"
+# Create note with inline content
+obsidian create "new-note.md" "# My Note\n\nContent here"
 
 # Create with frontmatter
 obsidian create "doc.md" "Content" --frontmatter '{"tags":["test"],"status":"draft"}'
+
+# Create from file (recommended for large content)
+obsidian create "target.md" --from-file "source.md" --frontmatter '{"tags":["imported"]}'
+
+# Create from stdin
+cat source.md | obsidian create "target.md" --stdin
+
+# Merge frontmatter from source file
+obsidian create "target.md" --from-file "source.md" \
+  --frontmatter '{"status":"draft"}' --merge-frontmatter
 ```
 
 ### Patch (Surgical Edits)
 
 ```bash
-# Append to end of note
+# Append to end of note (inline content)
 obsidian patch "doc.md" "New content"
+
+# Append from file (recommended for large content)
+obsidian patch "doc.md" --from-file "content.md"
+
+# Append from stdin
+cat content.md | obsidian patch "doc.md" --stdin
 
 # Prepend to beginning
 obsidian patch "doc.md" "Header content" --prepend
 
 # Append under specific heading
-obsidian patch "doc.md" "New findings" --heading "Results" --append
+obsidian patch "doc.md" "New findings" --heading "Results"
 
-# Replace content under heading
-obsidian patch "doc.md" "Updated section" --heading "Summary" --replace
+# Replace content under heading (from file)
+obsidian patch "doc.md" --from-file "new-section.md" --heading "Summary" --replace
 
 # Insert after specific line
 obsidian patch "doc.md" "New line" --line 42

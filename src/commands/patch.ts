@@ -6,9 +6,35 @@ import { outputSuccess, outputError } from '../utils/output';
 import type { CommandOptions, PatchOperation } from '../api/types';
 import YAML from 'yaml';
 
+async function readContentFromSource(
+  contentArg: string | undefined,
+  options: CommandOptions
+): Promise<string> {
+  // Priority: --from-file > --stdin > content argument
+  if (options.fromFile) {
+    const file = Bun.file(options.fromFile as string);
+    if (!(await file.exists())) {
+      throw new Error(`Source file not found: ${options.fromFile}`);
+    }
+    return await file.text();
+  } else if (options.stdin) {
+    const stdin = await Bun.stdin.text();
+    if (!stdin) {
+      throw new Error('No content provided via stdin');
+    }
+    return stdin;
+  } else if (contentArg) {
+    return contentArg;
+  } else {
+    throw new Error(
+      'No content provided. Use content argument, --from-file, or --stdin'
+    );
+  }
+}
+
 export async function patchCommand(
   path: string,
-  content: string,
+  content: string | undefined,
   options: CommandOptions
 ): Promise<void> {
   let vaultName: string | undefined;
@@ -19,20 +45,23 @@ export async function patchCommand(
 
     const restClient = new RestAPIClient(config);
 
+    // Read content from source
+    const finalContent = await readContentFromSource(content, options);
+
     // Handle different patch operations
     if (options.append) {
-      await restClient.appendToNote(path, content);
+      await restClient.appendToNote(path, finalContent);
     } else if (options.prepend) {
-      await restClient.prependToNote(path, content);
+      await restClient.prependToNote(path, finalContent);
     } else if (options.heading) {
       // Surgical edit under a specific heading
-      await patchUnderHeading(restClient, path, options.heading as string, content, options);
+      await patchUnderHeading(restClient, path, options.heading as string, finalContent, options);
     } else if (typeof options.line === 'number') {
       // Surgical edit at a specific line
-      await patchAtLine(restClient, path, options.line, content, options);
+      await patchAtLine(restClient, path, options.line, finalContent, options);
     } else {
       // Default to append
-      await restClient.appendToNote(path, content);
+      await restClient.appendToNote(path, finalContent);
     }
 
     const operation: PatchOperation = {
@@ -47,7 +76,7 @@ export async function patchCommand(
               : 'append',
       target: options.heading || options.line,
       operation: options.replace ? 'replace' : options.delete ? 'delete' : 'append',
-      content: options.delete ? undefined : content,
+      content: options.delete ? undefined : finalContent,
     };
 
     outputSuccess(
