@@ -1,0 +1,36 @@
+{
+  "name": "obsidian-cli",
+  "version": "0.1.0",
+  "description": "AI-optimized CLI tool for Obsidian vault operations using Local REST API",
+  "type": "module",
+  "module": "src/index.ts",
+  "private": false,
+  "bin": {
+    "obsidian": "./dist/obsidian-cli"
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --compile --outfile dist/obsidian-cli",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "commander": "^14.0.2",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^24.10.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "keywords": [
+    "obsidian",
+    "cli",
+    "ai",
+    "rest-api",
+    "vault"
+  ],
+  "author": "",
+  "license": "MIT"
+}
