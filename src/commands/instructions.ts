@@ -44,15 +44,16 @@ OUTPUT
 
 BEST PRACTICES
   - Use --from-file for content >1KB or with special chars (---, quotes, etc.)
-  - Store dates in frontmatter, not filename: "topic.md" not "2025-11-13-topic.md"
-  - Always include frontmatter: tags, date, status
+  - Filenames: Use descriptive kebab-case (e.g., "deno-llmz-integration.md")
+  - NO dates in filename - created_at/updated_at added automatically to frontmatter
+  - Always include frontmatter: tags, status (created_at/updated_at automatic)
   - Search before creating to avoid duplicates
   - Use --merge-frontmatter to preserve existing metadata
 
 EXAMPLES
   # Research workflow
   obsidian search "adk" --limit 10 | jq -r '.results[].path'
-  obsidian create "summary.md" --from-file "research.md" --frontmatter '{"date":"2025-11-13","tags":["summary"]}'
+  obsidian create "deno-llmz-integration-analysis.md" --from-file "research.md" --frontmatter '{"tags":["analysis","llmz"]}'
 
   # Bulk operations
   for note in $(obsidian search "status:draft" | jq -r '.results[].path'); do

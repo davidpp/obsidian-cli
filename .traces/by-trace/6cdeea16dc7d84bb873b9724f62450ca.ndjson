@@ -1,0 +1,2 @@
+{"t":"start","traceId":"6cdeea16dc7d84bb873b9724f62450ca","spanId":"e65705aebc040c3c","parentSpanId":null,"name":"llmz.chat.registerTools","kind":0,"startNs":1763236467860000000,"attrs":{"plugins":"builtin, hello-world","toolCount":5}}
+{"t":"end","traceId":"6cdeea16dc7d84bb873b9724f62450ca","spanId":"e65705aebc040c3c","parentSpanId":null,"name":"llmz.chat.registerTools","kind":0,"startNs":1763236467860000000,"endNs":1763236467860258300,"durationNs":258333,"status":{"code":0,"msg":null},"attrs":{"plugins":"builtin, hello-world","toolCount":5},"events":[],"links":[]}

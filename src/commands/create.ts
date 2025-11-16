@@ -89,6 +89,14 @@ export async function createCommand(
       frontmatter = { ...sourceFrontmatter, ...frontmatter };
     }
 
+    // Automatically add created_at and updated_at timestamps
+    const now = new Date().toISOString();
+    frontmatter = {
+      ...frontmatter,
+      created_at: now,
+      updated_at: now,
+    };
+
     await restClient.createNote(path, finalContent, frontmatter);
 
     outputSuccess(

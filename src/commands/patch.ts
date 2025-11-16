@@ -64,6 +64,16 @@ export async function patchCommand(
       await restClient.appendToNote(path, finalContent);
     }
 
+    // Update the updated_at timestamp
+    const note = await restClient.getNote(path);
+    if (note.frontmatter) {
+      const updatedFrontmatter = {
+        ...note.frontmatter,
+        updated_at: new Date().toISOString(),
+      };
+      await restClient.updateFrontmatter(path, updatedFrontmatter);
+    }
+
     const operation: PatchOperation = {
       targetType: options.heading
         ? 'heading'

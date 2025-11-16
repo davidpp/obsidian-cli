@@ -8,6 +8,8 @@ AI-optimized CLI tool for Obsidian vault operations using the Local REST API plu
 - **Hybrid search**: Fast Omnisearch plugin integration with REST API fallback
 - **Surgical editing**: PATCH operations with heading and line targeting
 - **Frontmatter manipulation**: Get/set YAML metadata efficiently
+- **Automatic timestamps**: `created_at` and `updated_at` added/updated automatically
+- **File input support**: `--from-file` and `--stdin` for large content without shell limits
 - **JSON-only output**: All commands return structured JSON for AI parsing
 - **Standalone executable**: Compiled with Bun, no runtime dependencies
 
@@ -137,15 +139,18 @@ obsidian get "note.md" --vault personal
 
 ### Create Note
 
-```bash
-# Create note with inline content
-obsidian create "new-note.md" "# My Note\n\nContent here"
+**Note:** `created_at` and `updated_at` timestamps are added automatically to all notes.
 
-# Create with frontmatter
-obsidian create "doc.md" "Content" --frontmatter '{"tags":["test"],"status":"draft"}'
+```bash
+# Create note with inline content (use kebab-case names)
+obsidian create "deno-llmz-integration.md" "# Deno LLMz Integration\n\nContent here"
+
+# Create with frontmatter (timestamps added automatically)
+obsidian create "analysis.md" "Content" --frontmatter '{"tags":["research"],"status":"draft"}'
+# Results in: tags, status, created_at, updated_at
 
 # Create from file (recommended for large content)
-obsidian create "target.md" --from-file "source.md" --frontmatter '{"tags":["imported"]}'
+obsidian create "integration-guide.md" --from-file "source.md" --frontmatter '{"tags":["guide"]}'
 
 # Create from stdin
 cat source.md | obsidian create "target.md" --stdin
@@ -156,6 +161,8 @@ obsidian create "target.md" --from-file "source.md" \
 ```
 
 ### Patch (Surgical Edits)
+
+**Note:** `updated_at` timestamp is automatically updated when patching notes.
 
 ```bash
 # Append to end of note (inline content)

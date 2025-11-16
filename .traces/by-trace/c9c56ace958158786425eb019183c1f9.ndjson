@@ -1,0 +1,2 @@
+{"t":"start","traceId":"c9c56ace958158786425eb019183c1f9","spanId":"a92cfef092cec6f4","parentSpanId":null,"name":"llmz.chat.mountUI","kind":0,"startNs":1763236467862000000,"attrs":{}}
+{"t":"end","traceId":"c9c56ace958158786425eb019183c1f9","spanId":"a92cfef092cec6f4","parentSpanId":null,"name":"llmz.chat.mountUI","kind":0,"startNs":1763236467862000000,"endNs":1763236467880348400,"durationNs":18348458,"status":{"code":0,"msg":null},"attrs":{},"events":[],"links":[]}
