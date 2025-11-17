@@ -45,8 +45,10 @@ OUTPUT
 BEST PRACTICES
   - Use --from-file for content >1KB or with special chars (---, quotes, etc.)
   - Filenames: Use descriptive kebab-case (e.g., "deno-llmz-integration.md")
-  - NO dates in filename - created_at/updated_at added automatically to frontmatter
-  - Always include frontmatter: tags, status (created_at/updated_at automatic)
+  - NO dates in filename - timestamps/title added automatically to frontmatter
+  - Auto-generated: title (from filename), created_at, updated_at
+  - Example: "deno-llmz-integration.md" → title: "Deno LLMZ Integration"
+  - Always include: tags, status (title/timestamps automatic)
   - Search before creating to avoid duplicates
   - Use --merge-frontmatter to preserve existing metadata
 

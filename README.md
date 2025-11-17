@@ -8,7 +8,7 @@ AI-optimized CLI tool for Obsidian vault operations using the Local REST API plu
 - **Hybrid search**: Fast Omnisearch plugin integration with REST API fallback
 - **Surgical editing**: PATCH operations with heading and line targeting
 - **Frontmatter manipulation**: Get/set YAML metadata efficiently
-- **Automatic timestamps**: `created_at` and `updated_at` added/updated automatically
+- **Automatic metadata**: `title`, `created_at`, and `updated_at` added/updated automatically
 - **File input support**: `--from-file` and `--stdin` for large content without shell limits
 - **JSON-only output**: All commands return structured JSON for AI parsing
 - **Standalone executable**: Compiled with Bun, no runtime dependencies
@@ -139,7 +139,12 @@ obsidian get "note.md" --vault personal
 
 ### Create Note
 
-**Note:** `created_at` and `updated_at` timestamps are added automatically to all notes.
+**Note:** The following fields are added automatically to all notes:
+- `title` - Generated from filename (e.g., "deno-llmz-integration-analysis.md" → "Deno LLMZ Integration Analysis")
+- `created_at` - ISO 8601 timestamp
+- `updated_at` - ISO 8601 timestamp
+
+You can override the auto-generated title by providing your own in `--frontmatter`.
 
 ```bash
 # Create note with inline content (use kebab-case names)

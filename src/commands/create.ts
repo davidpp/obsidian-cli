@@ -6,6 +6,24 @@ import { outputSuccess, outputError } from '../utils/output';
 import type { CommandOptions } from '../api/types';
 import YAML from 'yaml';
 
+function generateTitleFromFilename(filename: string): string {
+  // Remove .md extension
+  const baseName = filename.replace(/\.md$/, '');
+
+  // Split by hyphens and capitalize each word
+  const words = baseName.split('-').map(word => {
+    // Preserve common acronyms in uppercase
+    const acronyms = ['adk', 'api', 'cli', 'sdk', 'llm', 'llmz', 'ai', 'ml', 'ui', 'ux', 'db', 'sql', 'rest', 'http', 'https', 'json', 'yaml', 'xml', 'html', 'css', 'js', 'ts'];
+    if (acronyms.includes(word.toLowerCase())) {
+      return word.toUpperCase();
+    }
+    // Capitalize first letter, rest lowercase
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+
+  return words.join(' ');
+}
+
 async function readContentFromSource(
   contentArg: string | undefined,
   options: CommandOptions
@@ -89,9 +107,13 @@ export async function createCommand(
       frontmatter = { ...sourceFrontmatter, ...frontmatter };
     }
 
-    // Automatically add created_at and updated_at timestamps
+    // Generate title from filename if not provided
+    const generatedTitle = generateTitleFromFilename(path);
+
+    // Automatically add title, created_at, and updated_at
     const now = new Date().toISOString();
     frontmatter = {
+      title: generatedTitle,
       ...frontmatter,
       created_at: now,
       updated_at: now,
