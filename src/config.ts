@@ -11,9 +11,9 @@ const CONFIG_DIR = join(homedir(), '.config', 'obsidian-cli');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
 
 const DEFAULT_CONFIG: Config = {
-  defaultVault: 'botpress',
+  defaultVault: 'my-vault',
   vaults: {
-    botpress: {
+    'my-vault': {
       restApi: {
         baseUrl: 'http://127.0.0.1:27123',
         apiKey: '',

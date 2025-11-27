@@ -247,7 +247,7 @@ If Local REST API plugin uses HTTP (not recommended):
 ## Default Vault Recommendation
 
 For AI/automation workflows:
-- **Name**: Use a descriptive name (e.g., "research", "botpress", "personal")
+- **Name**: Use a descriptive name (e.g., "research", "work", "personal")
 - **Format**: Store dates in frontmatter, not filename
   - ✅ `adk-testing-guide.md` with `date: 2025-11-13` in frontmatter
   - ❌ `2025-11-13-adk-testing-guide.md`

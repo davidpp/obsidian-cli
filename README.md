@@ -55,9 +55,9 @@ Edit `~/.config/obsidian-cli/config.json` with your API key:
 
 ```json
 {
-  "defaultVault": "botpress",
+  "defaultVault": "my-vault",
   "vaults": {
-    "botpress": {
+    "my-vault": {
       "restApi": {
         "baseUrl": "http://127.0.0.1:27123",
         "apiKey": "your-api-key-here"
@@ -93,7 +93,7 @@ obsidian search "tables" --chars 500
 {
   "success": true,
   "operation": "search",
-  "vault": "botpress",
+  "vault": "my-vault",
   "results": [
     {
       "score": 305.87,
@@ -125,7 +125,7 @@ obsidian get "note.md" --vault personal
 {
   "success": true,
   "operation": "get",
-  "vault": "botpress",
+  "vault": "my-vault",
   "result": {
     "path": "2025-11-13-example.md",
     "content": "Note body content...",
@@ -325,7 +325,7 @@ All errors return JSON with `success: false`:
 {
   "success": false,
   "operation": "get",
-  "vault": "botpress",
+  "vault": "my-vault",
   "error": "Resource not found: /vault/missing.md",
   "meta": {
     "code": "NOT_FOUND",

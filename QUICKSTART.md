@@ -16,9 +16,9 @@ Edit `~/.config/obsidian-cli/config.json`:
 
 ```json
 {
-  "defaultVault": "botpress",
+  "defaultVault": "my-vault",
   "vaults": {
-    "botpress": {
+    "my-vault": {
       "restApi": {
         "baseUrl": "http://127.0.0.1:27123",
         "apiKey": "YOUR-API-KEY-HERE"
