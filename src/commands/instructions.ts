@@ -23,12 +23,14 @@ PATCH (Surgical edits)
   obsidian patch "note.md" "content" --prepend
   obsidian patch "note.md" "content" --heading "Section"
   obsidian patch "note.md" "content" --heading "Section" --replace
+  obsidian patch "note.md" --heading "Section" --delete   # Delete section
   obsidian patch "note.md" "content" --line 42
 
-FRONTMATTER
+FRONTMATTER (ALWAYS use --merge to preserve auto-generated fields)
   obsidian frontmatter "note.md" --get
   obsidian frontmatter "note.md" --get tags
-  obsidian frontmatter "note.md" --set '{"status":"done"}' --merge
+  obsidian frontmatter "note.md" --set '{"status":"done"}' --merge  # REQUIRED
+  obsidian frontmatter "note.md" --delete "field"     # Delete single field
 
 OTHER
   obsidian list                                       # List files
@@ -50,7 +52,7 @@ BEST PRACTICES
   - Example: "deno-llmz-integration.md" → title: "Deno LLMZ Integration"
   - Always include: tags, status (title/timestamps automatic)
   - Search before creating to avoid duplicates
-  - Use --merge-frontmatter to preserve existing metadata
+  - CRITICAL: Always use --merge with frontmatter --set (otherwise loses title/timestamps)
 
 EXAMPLES
   # Research workflow

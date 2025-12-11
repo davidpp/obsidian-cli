@@ -8,12 +8,15 @@ import YAML from 'yaml';
 
 function generateTitleFromFilename(filename: string): string {
   // Remove .md extension
-  const baseName = filename.replace(/\.md$/, '');
+  let baseName = filename.replace(/\.md$/, '');
+
+  // Strip leading underscores and special characters
+  baseName = baseName.replace(/^[_\-\.]+/, '');
 
   // Split by hyphens and capitalize each word
   const words = baseName.split('-').map(word => {
     // Preserve common acronyms in uppercase
-    const acronyms = ['adk', 'api', 'cli', 'sdk', 'llm', 'llmz', 'ai', 'ml', 'ui', 'ux', 'db', 'sql', 'rest', 'http', 'https', 'json', 'yaml', 'xml', 'html', 'css', 'js', 'ts'];
+    const acronyms = ['adk', 'api', 'cli', 'sdk', 'llm', 'llmz', 'ai', 'ml', 'ui', 'ux', 'db', 'sql', 'rest', 'http', 'https', 'json', 'yaml', 'xml', 'html', 'css', 'js', 'ts', 'e2e', 'poc', 'mvp', 'url', 'uri', 'jwt', 'oauth', 'sso', 'aws', 'gcp', 'ci', 'cd'];
     if (acronyms.includes(word.toLowerCase())) {
       return word.toUpperCase();
     }

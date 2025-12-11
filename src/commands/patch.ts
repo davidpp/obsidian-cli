@@ -45,8 +45,10 @@ export async function patchCommand(
 
     const restClient = new RestAPIClient(config);
 
-    // Read content from source
-    const finalContent = await readContentFromSource(content, options);
+    // Read content from source (not required for delete operations)
+    const finalContent = options.delete
+      ? ''
+      : await readContentFromSource(content, options);
 
     // Handle different patch operations
     if (options.append) {
