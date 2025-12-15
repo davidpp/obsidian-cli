@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "bun run src/index.ts",
     "build": "bun build src/index.ts --compile --outfile dist/obsidian-cli",
-    "test": "bun test"
+    "test": "bun test",
+    "release": "bun run scripts/release.ts"
   },
   "dependencies": {
     "commander": "^14.0.2",
