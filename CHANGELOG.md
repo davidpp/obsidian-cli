@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Excalidraw diagram generation with auto-layout
+  - New command: `obsidian excalidraw create/get/patch`
+  - DSL input format with nodes/edges for AI agents
+  - Auto-layout using dagre graph library
+  - LZ-String compression for Obsidian plugin compatibility
+  - Node types: rectangle, ellipse, diamond, cylinder, parallelogram
+  - Edge styles: solid, dashed, dotted
+  - Layout directions: LR, TB, RL, BT
+  - Updated instructions with Excalidraw usage guide
+
 ## [0.1.0] - 2024-12-11
 
 ### Added
