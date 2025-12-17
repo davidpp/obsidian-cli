@@ -1,6 +1,6 @@
 {
   "name": "obsidian-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "AI-optimized CLI tool for Obsidian vault operations using Local REST API",
   "type": "module",
   "module": "src/index.ts",
