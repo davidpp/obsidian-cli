@@ -32,6 +32,32 @@ FRONTMATTER (ALWAYS use --merge to preserve auto-generated fields)
   obsidian frontmatter "note.md" --set '{"status":"done"}' --merge  # REQUIRED
   obsidian frontmatter "note.md" --delete "field"     # Delete single field
 
+EXCALIDRAW (Diagrams with auto-layout)
+  obsidian excalidraw create "diagram.excalidraw.md" --from-file "input.json"
+  obsidian excalidraw get "diagram.excalidraw.md"     # Read as JSON
+  obsidian excalidraw patch "diagram.excalidraw.md" --from-file "additions.json"
+
+  DSL Input Format (JSON):
+  {
+    "nodes": [
+      { "id": "user", "label": "User", "type": "ellipse" },
+      { "id": "api", "label": "API Gateway" },
+      { "id": "db", "label": "Database", "type": "cylinder" }
+    ],
+    "edges": [
+      { "from": "user", "to": "api" },
+      { "from": "api", "to": "db", "label": "SQL", "style": "dashed" }
+    ],
+    "layout": "LR"
+  }
+
+  Node types: rectangle (default), ellipse, diamond, cylinder, parallelogram
+  Edge styles: solid (default), dashed, dotted
+  Layout: LR (left-right), TB (top-bottom), RL, BT
+  Optional: "theme": "dark"
+
+  Embedding in markdown: ![[diagram.excalidraw]] or ![[diagram.excalidraw|800]]
+
 OTHER
   obsidian list                                       # List files
   obsidian delete "note.md"

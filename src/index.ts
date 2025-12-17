@@ -10,6 +10,7 @@ import { deleteCommand } from './commands/delete';
 import { listCommand } from './commands/list';
 import { configCommand } from './commands/config';
 import { instructionsCommand } from './commands/instructions';
+import { excalidrawCreate, excalidrawGet, excalidrawPatch } from './commands/excalidraw';
 
 const program = new Command();
 
@@ -151,6 +152,48 @@ program
   .description('Show concise AI-optimized usage instructions')
   .action(() => {
     instructionsCommand();
+  });
+
+// Excalidraw command with subcommands
+const excalidrawCmd = program
+  .command('excalidraw')
+  .description('Generate and manage Excalidraw diagrams');
+
+// Excalidraw create subcommand
+addVaultOption(
+  excalidrawCmd
+    .command('create')
+    .description('Create a new Excalidraw diagram from DSL')
+    .argument('<path>', 'Diagram path (e.g., "diagrams/arch.excalidraw.md")')
+    .option('-f, --from-file <path>', 'Read diagram DSL from JSON file')
+    .option('--stdin', 'Read diagram DSL from stdin')
+)
+  .action(async (path: string, options) => {
+    await excalidrawCreate(path, options);
+  });
+
+// Excalidraw get subcommand
+addVaultOption(
+  excalidrawCmd
+    .command('get')
+    .description('Get an Excalidraw diagram as JSON')
+    .argument('<path>', 'Diagram path')
+)
+  .action(async (path: string, options) => {
+    await excalidrawGet(path, options);
+  });
+
+// Excalidraw patch subcommand
+addVaultOption(
+  excalidrawCmd
+    .command('patch')
+    .description('Add elements to an existing Excalidraw diagram')
+    .argument('<path>', 'Diagram path')
+    .option('-f, --from-file <path>', 'Read additions from JSON file')
+    .option('--stdin', 'Read additions from stdin')
+)
+  .action(async (path: string, options) => {
+    await excalidrawPatch(path, options);
   });
 
 program.parse();
