@@ -4,6 +4,7 @@ import { getVaultConfig } from '../config';
 import { RestAPIClient } from '../api/rest';
 import { outputSuccess, outputError } from '../utils/output';
 import type { CommandOptions } from '../api/types';
+import { generateTitleFromFilename } from '../utils/title';
 
 export async function frontmatterCommand(
   path: string,
@@ -85,8 +86,33 @@ export async function frontmatterCommand(
       } else {
         throw new Error('No frontmatter to delete or invalid field');
       }
+    }
+    // Fix operation — ensure required fields exist
+    else if (options.fix) {
+      const existing = (await restClient.getFrontmatter(path)) || {};
+      const fixed: string[] = [];
+
+      if (!existing.title) {
+        existing.title = generateTitleFromFilename(path);
+        fixed.push('title');
+      }
+      const now = new Date().toISOString();
+      if (!existing.created_at) {
+        existing.created_at = now;
+        fixed.push('created_at');
+      }
+      if (!existing.updated_at) {
+        existing.updated_at = now;
+        fixed.push('updated_at');
+      }
+
+      if (fixed.length > 0) {
+        await restClient.updateFrontmatter(path, existing);
+      }
+
+      outputSuccess('frontmatter.fix', { path, fixed }, undefined, vaultName);
     } else {
-      throw new Error('Must specify --get, --set, or --delete operation');
+      throw new Error('Must specify --get, --set, --delete, or --fix operation');
     }
   } catch (error) {
     outputError('frontmatter', error as Error, vaultName);

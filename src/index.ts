@@ -11,13 +11,18 @@ import { listCommand } from './commands/list';
 import { configCommand } from './commands/config';
 import { instructionsCommand } from './commands/instructions';
 import { excalidrawCreate, excalidrawGet, excalidrawPatch } from './commands/excalidraw';
+import { inboxCommand } from './commands/inbox';
+import { moveCommand } from './commands/move';
+import { staleCommand } from './commands/stale';
+import { statsCommand } from './commands/stats';
+import { linkCommand } from './commands/link';
 
 const program = new Command();
 
 program
   .name('obsidian')
   .description('AI-optimized CLI tool for Obsidian vault operations')
-  .version('0.1.0');
+  .version('0.3.0');
 
 // Global options
 const addVaultOption = (cmd: Command) => {
@@ -101,6 +106,7 @@ addVaultOption(
     .option('--set <json>', 'Set frontmatter from JSON')
     .option('--delete <field>', 'Delete a frontmatter field')
     .option('--merge', 'Merge with existing frontmatter when using --set')
+    .option('--fix', 'Fix missing title/timestamps in frontmatter')
 )
   .action(async (path: string, options) => {
     await frontmatterCommand(path, options);
@@ -152,6 +158,73 @@ program
   .description('Show concise AI-optimized usage instructions')
   .action(() => {
     instructionsCommand();
+  });
+
+// Inbox command - List inbox items for triage
+addVaultOption(
+  program
+    .command('inbox')
+    .description('List inbox items with frontmatter for triage')
+    .option('--folder <path>', 'Inbox folder path (default: inbox)')
+)
+  .action(async (options) => {
+    await inboxCommand(options);
+  });
+
+// Move command - Move note between folders
+addVaultOption(
+  program
+    .command('move')
+    .description('Move note between folders, update timestamps')
+    .argument('<source>', 'Source note path')
+    .argument('<destination>', 'Destination path or folder')
+    .option('--no-update-timestamp', 'Skip updating updated_at timestamp')
+)
+  .action(async (source: string, destination: string, options) => {
+    await moveCommand(source, destination, options);
+  });
+
+// Stale command - Find old research notes
+addVaultOption(
+  program
+    .command('stale')
+    .description('Find research notes older than N days')
+    .option('-d, --days <number>', 'Stale threshold in days', '30')
+    .option('--folder <path>', 'Folder to search (default: research)')
+)
+  .action(async (options) => {
+    await staleCommand({
+      ...options,
+      days: parseInt(options.days),
+    });
+  });
+
+// Stats command - Vault health overview
+addVaultOption(
+  program
+    .command('stats')
+    .description('Vault health: inbox count, stale research, scope breakdown')
+    .option('--stale-days <number>', 'Stale threshold for research', '30')
+)
+  .action(async (options) => {
+    await statsCommand({
+      ...options,
+      staleDays: options.staleDays ? parseInt(options.staleDays) : undefined,
+    });
+  });
+
+// Link command - Add wikilink to note
+addVaultOption(
+  program
+    .command('link')
+    .description('Add wikilink from source note to target')
+    .argument('<source>', 'Source note path')
+    .argument('<target>', 'Target note path or name')
+    .option('--heading <name>', 'Add link under specific heading')
+    .option('--alias <text>', 'Display alias for the wikilink')
+)
+  .action(async (source: string, target: string, options) => {
+    await linkCommand(source, target, options);
   });
 
 // Excalidraw command with subcommands

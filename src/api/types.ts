@@ -9,6 +9,7 @@ export interface VaultConfig {
     enabled: boolean;
     baseUrl: string;
   };
+  vaultPath?: string;
 }
 
 export interface Config {

@@ -4,28 +4,8 @@ import { getVaultConfig } from '../config';
 import { RestAPIClient } from '../api/rest';
 import { outputSuccess, outputError } from '../utils/output';
 import type { CommandOptions } from '../api/types';
+import { generateTitleFromFilename } from '../utils/title';
 import YAML from 'yaml';
-
-function generateTitleFromFilename(filename: string): string {
-  // Remove .md extension
-  let baseName = filename.replace(/\.md$/, '');
-
-  // Strip leading underscores and special characters
-  baseName = baseName.replace(/^[_\-\.]+/, '');
-
-  // Split by hyphens and capitalize each word
-  const words = baseName.split('-').map(word => {
-    // Preserve common acronyms in uppercase
-    const acronyms = ['adk', 'api', 'cli', 'sdk', 'llm', 'llmz', 'ai', 'ml', 'ui', 'ux', 'db', 'sql', 'rest', 'http', 'https', 'json', 'yaml', 'xml', 'html', 'css', 'js', 'ts', 'e2e', 'poc', 'mvp', 'url', 'uri', 'jwt', 'oauth', 'sso', 'aws', 'gcp', 'ci', 'cd'];
-    if (acronyms.includes(word.toLowerCase())) {
-      return word.toUpperCase();
-    }
-    // Capitalize first letter, rest lowercase
-    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-  });
-
-  return words.join(' ');
-}
 
 async function readContentFromSource(
   contentArg: string | undefined,
@@ -124,11 +104,13 @@ export async function createCommand(
 
     await restClient.createNote(path, finalContent, frontmatter);
 
+    const filePath = config.vaultPath ? `${config.vaultPath}/${path}` : undefined;
     outputSuccess(
       'create',
       {
         path,
         created: true,
+        ...(filePath && { filePath }),
       },
       undefined,
       vaultName

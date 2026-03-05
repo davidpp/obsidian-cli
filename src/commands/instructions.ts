@@ -31,6 +31,7 @@ FRONTMATTER (ALWAYS use --merge to preserve auto-generated fields)
   obsidian frontmatter "note.md" --get tags
   obsidian frontmatter "note.md" --set '{"status":"done"}' --merge  # REQUIRED
   obsidian frontmatter "note.md" --delete "field"     # Delete single field
+  obsidian frontmatter "note.md" --fix                # Ensure title/timestamps exist
 
 EXCALIDRAW (Diagrams with auto-layout)
   obsidian excalidraw create "diagram.excalidraw.md" --from-file "input.json"
@@ -58,6 +59,17 @@ EXCALIDRAW (Diagrams with auto-layout)
 
   Embedding in markdown: ![[diagram.excalidraw]] or ![[diagram.excalidraw|800]]
 
+KNOWLEDGE MANAGEMENT (Jake Notes integration)
+  obsidian inbox                                      # List inbox items for triage
+  obsidian inbox --folder "capture"                   # Custom inbox folder
+  obsidian move "inbox/note.md" "research/"           # Move + update timestamp
+  obsidian move "inbox/note.md" "research/" --no-update-timestamp
+  obsidian stale                                      # Find research >30 days old
+  obsidian stale --days 60 --folder "research"
+  obsidian stats                                      # Vault health overview
+  obsidian link "note.md" "related-note"              # Add wikilink
+  obsidian link "note.md" "ref" --alias "Reference"   # Aliased link
+
 OTHER
   obsidian list                                       # List files
   obsidian delete "note.md"
@@ -84,6 +96,15 @@ EXAMPLES
   # Research workflow
   obsidian search "adk" --limit 10 | jq -r '.results[].path'
   obsidian create "deno-llmz-integration-analysis.md" --from-file "research.md" --frontmatter '{"tags":["analysis","llmz"]}'
+
+  # Inbox triage workflow
+  obsidian inbox | jq '.results[] | {path, title, created_at}'
+  obsidian move "inbox/article.md" "research/"
+  obsidian frontmatter "research/article.md" --set '{"scope":"personal","status":"research"}' --merge
+
+  # Weekly review
+  obsidian stats | jq '{inbox: .result.inbox.count, stale: .result.research.stale_count}'
+  obsidian stale --days 30 | jq '.results[].path'
 
   # Bulk operations
   for note in $(obsidian search "status:draft" | jq -r '.results[].path'); do
