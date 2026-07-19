@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-19
+
 ### Added
 - Automatic vault discovery from Obsidian's own config — no manual API key setup
   - New command: `obsidian vaults` lists every vault Obsidian knows, showing which
