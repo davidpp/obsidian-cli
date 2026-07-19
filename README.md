@@ -18,36 +18,45 @@ AI-optimized CLI tool for Obsidian vault operations using the Local REST API plu
 
 1. **Obsidian** with the **Local REST API** plugin installed and configured
 2. **(Optional) Omnisearch plugin** for faster search
-3. **Bun** runtime installed
+
+> The prebuilt binary is standalone — no runtime needed. **Bun** is only required to build from source.
 
 **→ See [SETUP.md](SETUP.md) for detailed setup instructions including plugin installation and vault configuration.**
 
 ## Installation
 
-### Quick Install (Recommended)
+### Prebuilt binary (recommended)
+
+No runtime required — download the standalone executable for your platform:
 
 ```bash
-# Clone and install
-git clone <repository-url>
+# macOS (Apple Silicon)
+curl -fsSL https://github.com/davidpp/obsidian-cli/releases/latest/download/obsidian-cli-darwin-arm64 -o /usr/local/bin/obsidian
+chmod +x /usr/local/bin/obsidian
+
+# macOS (Intel)
+curl -fsSL https://github.com/davidpp/obsidian-cli/releases/latest/download/obsidian-cli-darwin-x64 -o /usr/local/bin/obsidian
+chmod +x /usr/local/bin/obsidian
+
+# Linux (x64)
+curl -fsSL https://github.com/davidpp/obsidian-cli/releases/latest/download/obsidian-cli-linux-x64 -o /usr/local/bin/obsidian
+chmod +x /usr/local/bin/obsidian
+```
+
+### From source (development)
+
+Requires [Bun](https://bun.sh):
+
+```bash
+git clone https://github.com/davidpp/obsidian-cli.git
 cd obsidian-cli
 bun install
 
-# Link globally (creates 'obsidian' command)
+# Run in place, or link globally as the 'obsidian' command
 bun link
-```
 
-### Build Standalone Executable (Optional)
-
-```bash
-# Build the executable
-bun run build
-
-# Install using script
-./install.sh
-
-# Or manually copy to your PATH
-cp dist/obsidian-cli ~/bin/obsidian
-chmod +x ~/bin/obsidian
+# Or build a standalone executable
+bun run build && cp dist/obsidian-cli ~/bin/obsidian && chmod +x ~/bin/obsidian
 ```
 
 ### Configuration
