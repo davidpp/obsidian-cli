@@ -12,36 +12,29 @@ bun link
 
 ## 2. Configure
 
-Edit `~/.config/obsidian-cli/config.json`:
+Nothing to configure. Enable the **Local REST API** plugin in Obsidian (Settings →
+Community plugins), and the CLI auto-discovers your vaults — including each one's API
+key and port — straight from Obsidian's config:
 
-```json
-{
-  "defaultVault": "my-vault",
-  "vaults": {
-    "my-vault": {
-      "restApi": {
-        "baseUrl": "http://127.0.0.1:27123",
-        "apiKey": "YOUR-API-KEY-HERE"
-      },
-      "omnisearch": {
-        "enabled": true,
-        "baseUrl": "http://localhost:51361"
-      }
-    }
-  }
-}
+```bash
+# See every vault the CLI found (and which are usable)
+obsidian vaults
+
+# Pick the default used by all commands
+obsidian vaults --use "my-vault"
 ```
 
-Get your API key from: Obsidian Settings → Local REST API
+If a vault shows `available: false`, its `reason` tells you what to fix (usually:
+enable the plugin, or give it a unique port when two vaults are open).
+
+> Prefer to pin things by hand? You still can — add an entry to
+> `~/.config/obsidian-cli/config.json` and it overrides discovery.
 
 ## 3. Test
 
 ```bash
-# Verify configuration
-obsidian config --list
-
-# Search your vault
-obsidian search "test" --limit 5
+# Search your vault (add --meta for title/tags/frontmatter per hit)
+obsidian search "test" --limit 5 --meta
 
 # Get a note
 obsidian get "filename.md"

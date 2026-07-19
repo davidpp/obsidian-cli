@@ -57,7 +57,21 @@ obsidian --version
 
 ## Step 3: Configure Your Vault
 
-On first run, obsidian-cli will create a config file:
+**Usually nothing to do here.** Once the Local REST API plugin is enabled, obsidian-cli
+auto-discovers your vaults — name, API key, and port — from Obsidian's own config:
+
+```bash
+# List discovered vaults and which are usable
+obsidian vaults
+
+# Set the default used by all commands
+obsidian vaults --use "my-vault"
+```
+
+The rest of this step is only needed if you want to **override** discovery (custom port,
+key, or omnisearch URL) — manual entries in `config.json` take precedence.
+
+### Manual configuration (optional override)
 
 ```bash
 obsidian config --list

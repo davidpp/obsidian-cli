@@ -4,14 +4,15 @@ AI-optimized CLI tool for Obsidian vault operations using the Local REST API plu
 
 ## Features
 
-- **Multi-vault support** with configurable default vault
-- **Hybrid search**: Fast Omnisearch plugin integration with REST API fallback
+- **Zero-config vault discovery**: auto-detects your vaults (and each one's REST port) from Obsidian's own config — no manual API keys or ports to copy
+- **Hybrid search**: fast Omnisearch plugin integration with REST API fallback, and `--meta` to enrich results with title/frontmatter/tags/stats in one call
 - **Surgical editing**: PATCH operations with heading and line targeting
-- **Frontmatter manipulation**: Get/set YAML metadata efficiently
+- **Frontmatter manipulation**: get/set YAML metadata efficiently
 - **Automatic metadata**: `title`, `created_at`, and `updated_at` added/updated automatically
+- **Query & metadata**: `tags`, structured `find` (JsonLogic), `active` note, `commands`, and `open` in the Obsidian UI
 - **File input support**: `--from-file` and `--stdin` for large content without shell limits
-- **JSON-only output**: All commands return structured JSON for AI parsing
-- **Standalone executable**: Compiled with Bun, no runtime dependencies
+- **JSON-only output**: every command returns structured JSON for AI parsing
+- **Standalone executable**: compiled with Bun, no runtime dependencies
 
 ## Prerequisites
 
