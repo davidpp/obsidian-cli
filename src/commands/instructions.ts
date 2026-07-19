@@ -70,10 +70,15 @@ KNOWLEDGE MANAGEMENT (Jake Notes integration)
   obsidian link "note.md" "related-note"              # Add wikilink
   obsidian link "note.md" "ref" --alias "Reference"   # Aliased link
 
+VAULTS (auto-discovered from Obsidian - no manual setup)
+  obsidian vaults                                     # List all vaults Obsidian knows
+  obsidian vaults --use "perso"                       # Set default vault for all commands
+  obsidian get "note.md" -v "perso"                   # Override vault per command
+
 OTHER
   obsidian list                                       # List files
   obsidian delete "note.md"
-  obsidian config --list                              # Show vaults
+  obsidian config --list                              # Show manually-configured vaults
 
 FILE INPUT (avoids shell limits, escaping issues)
   --from-file "path"   # Read from file (preferred for large content)

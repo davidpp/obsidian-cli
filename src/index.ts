@@ -9,6 +9,7 @@ import { frontmatterCommand } from './commands/frontmatter';
 import { deleteCommand } from './commands/delete';
 import { listCommand } from './commands/list';
 import { configCommand } from './commands/config';
+import { vaultsCommand } from './commands/vaults';
 import { instructionsCommand } from './commands/instructions';
 import { excalidrawCreate, excalidrawGet, excalidrawPatch } from './commands/excalidraw';
 import { inboxCommand } from './commands/inbox';
@@ -150,6 +151,15 @@ program
   .option('--omnisearch-url <url>', 'Omnisearch base URL')
   .action(async (options) => {
     await configCommand(options);
+  });
+
+// Vaults command - auto-discovered vault list + default selection
+program
+  .command('vaults')
+  .description('List Obsidian vaults (auto-discovered) and set the default')
+  .option('--use <name>', 'Set the default vault used by all commands')
+  .action(async (options) => {
+    await vaultsCommand(options);
   });
 
 // Instructions command

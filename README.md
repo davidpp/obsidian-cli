@@ -51,7 +51,22 @@ chmod +x ~/bin/obsidian
 
 ### Configuration
 
-Edit `~/.config/obsidian-cli/config.json` with your API key:
+Vaults are **auto-discovered** from Obsidian — no manual setup needed. The CLI reads
+Obsidian's vault registry and each vault's Local REST API plugin settings (port + API
+key) directly from disk:
+
+```bash
+obsidian vaults                 # List every vault Obsidian knows
+obsidian vaults --use perso     # Set the default vault for all commands
+obsidian get "note.md" -v perso # Or override per command
+```
+
+The default vault resolves to your configured default, else the vault currently open in
+Obsidian, else the only usable one. A vault needs the [Local REST API](https://github.com/coddingtonbear/obsidian-local-rest-api)
+plugin enabled to be usable; vaults without it are listed with a reason.
+
+To override discovery (custom port, key, or omnisearch), add an entry to
+`~/.config/obsidian-cli/config.json` — manual entries take precedence:
 
 ```json
 {

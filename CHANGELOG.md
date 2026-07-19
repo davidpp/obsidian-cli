@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Automatic vault discovery from Obsidian's own config — no manual API key setup
+  - New command: `obsidian vaults` lists every vault Obsidian knows, showing which
+    are usable (Local REST API installed), which has omnisearch, and the default
+  - New command: `obsidian vaults --use <name>` sets the default vault for all commands
+  - Reads Obsidian's registry (`obsidian.json`) for vault paths and the open vault,
+    and each vault's `obsidian-local-rest-api` plugin data for port + API key
+  - Works with zero config: default resolves to the configured default, else the
+    currently-open vault, else the only usable vault
+  - Vaults without the Local REST API plugin are listed with a clear reason instead
+    of failing silently
+  - Manual entries in `config.json` still override discovery (custom port/key/omnisearch)
+
 ## [0.2.0] - 2025-12-17
 
 ### Added
