@@ -35,6 +35,14 @@ export interface SearchResult {
   excerpt?: string;
   matches?: string[];
   vault?: string;
+  title?: string;
+  frontmatter?: Record<string, any>;
+  tags?: string[];
+  stat?: {
+    ctime: number;
+    mtime: number;
+    size: number;
+  };
 }
 
 export interface OmnisearchResult {

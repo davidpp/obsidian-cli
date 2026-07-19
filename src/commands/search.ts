@@ -4,7 +4,33 @@ import { getVaultConfig } from '../config';
 import { RestAPIClient } from '../api/rest';
 import { OmnisearchClient } from '../api/omnisearch';
 import { outputResults, outputError } from '../utils/output';
-import type { CommandOptions, SearchResult } from '../api/types';
+import { generateTitleFromFilename } from '../utils/title';
+import type { CommandOptions, SearchResult, VaultConfig } from '../api/types';
+
+// Attach frontmatter, tags, title, and file stats to each hit so an agent can triage
+// results without a follow-up call per note. Per-note failures are skipped, not fatal.
+async function enrichWithMetadata(
+  results: SearchResult[],
+  config: VaultConfig
+): Promise<SearchResult[]> {
+  const restClient = new RestAPIClient(config);
+  return Promise.all(
+    results.map(async (result) => {
+      try {
+        const meta = await restClient.getNoteMetadata(result.path);
+        return {
+          ...result,
+          title: meta.frontmatter?.title || generateTitleFromFilename(result.path),
+          frontmatter: meta.frontmatter,
+          tags: meta.tags,
+          stat: meta.stat,
+        };
+      } catch {
+        return result;
+      }
+    })
+  );
+}
 
 export async function searchCommand(
   query: string,
@@ -47,6 +73,10 @@ export async function searchCommand(
         score: 0,
         path,
       }));
+    }
+
+    if (options.meta && results.length > 0) {
+      results = await enrichWithMetadata(results, config);
     }
 
     const executionTime = Date.now() - startTime;

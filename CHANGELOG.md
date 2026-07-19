@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `obsidian search --meta` enriches each result with `title`, `frontmatter`, `tags`,
+  and file `stat`, so an agent can triage hits without a `get`/`frontmatter` call per
+  result (metadata fetched in parallel; per-note failures are skipped, not fatal)
+
 ## [0.4.0] - 2026-07-19
 
 ### Added

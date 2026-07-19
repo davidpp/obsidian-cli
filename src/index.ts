@@ -43,6 +43,7 @@ addVaultOption(
     .argument('<query>', 'Search query')
     .option('-l, --limit <number>', 'Maximum number of results', '50')
     .option('-c, --chars <number>', 'Context length for excerpts', '300')
+    .option('--meta', 'Enrich each result with title, frontmatter, tags, and file stats')
 )
   .action(async (query: string, options) => {
     await searchCommand(query, {

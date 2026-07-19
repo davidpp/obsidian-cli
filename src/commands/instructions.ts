@@ -7,6 +7,7 @@ Obsidian CLI - AI-Optimized Usage Guide
 
 SEARCH (Omnisearch + fallback)
   obsidian search "query" --limit 5
+  obsidian search "query" --limit 5 --meta   # + title/frontmatter/tags/stat per hit (triage in one call)
 
 READ
   obsidian get "note.md"

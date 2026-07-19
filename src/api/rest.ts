@@ -182,6 +182,21 @@ export class RestAPIClient {
     await this.updateNote(path, fullContent);
   }
 
+  async getNoteMetadata(
+    path: string
+  ): Promise<{ frontmatter?: Record<string, any>; tags?: string[]; stat?: Note['stat'] }> {
+    const encodedPath = encodeURIComponent(path);
+    const raw = await this.request<string>(`/vault/${encodedPath}`, {
+      headers: { Accept: 'application/vnd.olrapi.note+json' },
+    });
+    const data = (typeof raw === 'string' ? JSON.parse(raw) : raw) as {
+      frontmatter?: Record<string, any>;
+      tags?: string[];
+      stat?: Note['stat'];
+    };
+    return { frontmatter: data.frontmatter, tags: data.tags, stat: data.stat };
+  }
+
   async getTags(): Promise<Array<{ name: string; count: number }>> {
     const res = await this.request<{ tags: Array<{ name: string; count: number }> }>('/tags/');
     return res.tags || [];

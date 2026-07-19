@@ -106,6 +106,9 @@ obsidian search "query" --vault personal
 
 # Adjust excerpt length
 obsidian search "tables" --chars 500
+
+# Enrich each hit with title, frontmatter, tags, and file stats (one call, no per-result get)
+obsidian search "adk testing" --limit 5 --meta
 ```
 
 **Output:**
