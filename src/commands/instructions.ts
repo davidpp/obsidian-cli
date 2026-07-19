@@ -74,6 +74,18 @@ VAULTS (auto-discovered from Obsidian - no manual setup)
   obsidian vaults                                     # List all vaults Obsidian knows
   obsidian vaults --use "perso"                       # Set default vault for all commands
   obsidian get "note.md" -v "perso"                   # Override vault per command
+  # The right REST port is auto-detected per vault by probing with its API key.
+  # If a vault shows available:false, its 'reason' says how to fix it.
+
+QUERY & METADATA
+  obsidian tags                                       # All tags with usage counts
+  obsidian find '{"in":["cli",{"var":"tags"}]}'      # Structured search (JsonLogic on metadata)
+  obsidian active                                     # Note currently open in Obsidian
+
+COMMANDS & UI
+  obsidian commands                                   # List Obsidian command ids
+  obsidian commands --run "editor:save-file"          # Run a command by id
+  obsidian open "note.md"                             # Open a note in the Obsidian UI
 
 OTHER
   obsidian list                                       # List files

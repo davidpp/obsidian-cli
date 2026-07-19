@@ -181,4 +181,53 @@ export class RestAPIClient {
       : `${content}\n\n${note.content}`;
     await this.updateNote(path, fullContent);
   }
+
+  async getTags(): Promise<Array<{ name: string; count: number }>> {
+    const res = await this.request<{ tags: Array<{ name: string; count: number }> }>('/tags/');
+    return res.tags || [];
+  }
+
+  async getCommands(): Promise<Array<{ id: string; name: string }>> {
+    const res = await this.request<{ commands: Array<{ id: string; name: string }> }>('/commands/');
+    return res.commands || [];
+  }
+
+  async executeCommand(id: string): Promise<void> {
+    // Command ids are URL-safe tokens (e.g. "editor:save-file"); keep the colon.
+    await this.request(`/commands/${id}/`, { method: 'POST' });
+  }
+
+  async getActiveNote(): Promise<Note> {
+    const raw = await this.request<string>('/active/', {
+      headers: { Accept: 'application/vnd.olrapi.note+json' },
+    });
+    const data = (typeof raw === 'string' ? JSON.parse(raw) : raw) as {
+      path: string;
+      content: string;
+      frontmatter?: Record<string, any>;
+      tags?: string[];
+      stat?: Note['stat'];
+    };
+    return {
+      path: data.path,
+      content: data.content,
+      frontmatter: data.frontmatter,
+      tags: data.tags,
+      stat: data.stat,
+    };
+  }
+
+  async openFile(path: string): Promise<void> {
+    const encodedPath = encodeURIComponent(path);
+    await this.request(`/open/${encodedPath}`, { method: 'POST' });
+  }
+
+  async searchJsonLogic(query: string): Promise<Array<{ filename: string; result: any }>> {
+    const res = await this.request<Array<{ filename: string; result: any }>>('/search/', {
+      method: 'POST',
+      body: query,
+      headers: { 'Content-Type': 'application/vnd.olrapi.jsonlogic+json' },
+    });
+    return res || [];
+  }
 }

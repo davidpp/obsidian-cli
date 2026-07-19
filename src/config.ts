@@ -6,7 +6,7 @@ import { homedir } from 'os';
 import { join } from 'path';
 import type { Config, VaultConfig } from './api/types';
 import { ConfigError } from './utils/errors';
-import { discoverVaults, discoveredToVaultConfig } from './discovery';
+import { discoverVaults, discoveredToVaultConfig, resolveEndpoint } from './discovery';
 
 const CONFIG_DIR = join(homedir(), '.config', 'obsidian-cli');
 const CONFIG_FILE = join(CONFIG_DIR, 'config.json');
@@ -24,6 +24,7 @@ export interface KnownVault {
   available: boolean;
   omnisearch: boolean;
   reason?: string;
+  collidesWith?: string[];
 }
 
 export async function ensureConfigDir(): Promise<void> {
@@ -108,7 +109,56 @@ export async function getKnownVaults(): Promise<KnownVault[]> {
     });
   }
 
-  return [...map.values()];
+  const vaults = [...map.values()];
+  markCollisions(vaults);
+  return vaults;
+}
+
+// Two vaults that declare the same REST baseUrl can't both bind it; flag them so the
+// probe can tell the user which one to give a unique port.
+function markCollisions(vaults: KnownVault[]): void {
+  const byUrl = new Map<string, string[]>();
+  for (const v of vaults) {
+    if (!v.config.restApi?.baseUrl || !v.config.restApi?.apiKey) continue;
+    const group = byUrl.get(v.config.restApi.baseUrl) ?? [];
+    group.push(v.name);
+    byUrl.set(v.config.restApi.baseUrl, group);
+  }
+  for (const v of vaults) {
+    const group = byUrl.get(v.config.restApi?.baseUrl ?? '') ?? [];
+    if (group.length > 1) {
+      v.collidesWith = group.filter((n) => n !== v.name);
+    }
+  }
+}
+
+// Confirm a vault's REST server is actually reachable with its key, auto-correcting the
+// baseUrl to the port that answers. Returns availability + a precise reason on failure.
+export async function probeVault(v: KnownVault): Promise<KnownVault> {
+  const apiKey = v.config.restApi?.apiKey;
+  if (!apiKey) return v; // already unavailable with a disk-derived reason
+
+  const { baseUrl, ok } = await resolveEndpoint(apiKey, v.config.restApi.baseUrl);
+  if (ok) {
+    return {
+      ...v,
+      available: true,
+      reason: undefined,
+      config: { ...v.config, restApi: { ...v.config.restApi, baseUrl } },
+    };
+  }
+
+  const reason = v.collidesWith?.length
+    ? `Port ${v.config.restApi.baseUrl} is shared with ${v.collidesWith
+        .map((n) => `"${n}"`)
+        .join(', ')} — give this vault a unique port in Obsidian's Local REST API settings`
+    : `REST API not reachable at ${v.config.restApi.baseUrl} — is the vault open in Obsidian?`;
+  return { ...v, available: false, reason };
+}
+
+export async function getProbedVaults(): Promise<KnownVault[]> {
+  const known = await getKnownVaults();
+  return Promise.all(known.map((v) => probeVault(v)));
 }
 
 function pickDefault(known: KnownVault[], configuredDefault: string): string {
@@ -148,13 +198,19 @@ export async function getVaultConfig(
       `Vault "${name}" not found. Known vaults: ${known.map((v) => v.name).join(', ')}`
     );
   }
-  if (!vault.available) {
+  if (!vault.config.restApi?.apiKey) {
     throw new ConfigError(
       `Vault "${name}" is not usable: ${vault.reason ?? 'Local REST API not available'}.`
     );
   }
 
-  return { name: vault.name, config: vault.config };
+  // Probe the target so the command uses the port that actually answers to its key.
+  const probed = await probeVault(vault);
+  if (!probed.available) {
+    throw new ConfigError(`Vault "${name}" is not usable: ${probed.reason}.`);
+  }
+
+  return { name: probed.name, config: probed.config };
 }
 
 export async function addVault(name: string, vaultConfig: VaultConfig): Promise<void> {
@@ -193,9 +249,11 @@ export async function setDefaultVault(name: string): Promise<void> {
       `Vault "${name}" not found. Known vaults: ${known.map((v) => v.name).join(', ')}`
     );
   }
-  if (!vault.available) {
+
+  const probed = await probeVault(vault);
+  if (!probed.available) {
     throw new ConfigError(
-      `Cannot set "${name}" as default: ${vault.reason ?? 'Local REST API not available'}.`
+      `Cannot set "${name}" as default: ${probed.reason ?? 'Local REST API not available'}.`
     );
   }
 

@@ -1,7 +1,7 @@
 // Vaults command - list auto-discovered vaults and pick the default
 
 import {
-  getKnownVaults,
+  getProbedVaults,
   getDefaultVaultName,
   setDefaultVault,
   getConfigPath,
@@ -17,7 +17,7 @@ export async function vaultsCommand(options: CommandOptions): Promise<void> {
       return;
     }
 
-    const known = await getKnownVaults();
+    const known = await getProbedVaults();
     const defaultName = await getDefaultVaultName();
 
     const results = known.map((v) => ({
@@ -25,6 +25,7 @@ export async function vaultsCommand(options: CommandOptions): Promise<void> {
       path: v.path,
       default: v.name === defaultName,
       available: v.available,
+      baseUrl: v.config.restApi?.baseUrl,
       omnisearch: v.omnisearch,
       open: v.open,
       source: v.source,

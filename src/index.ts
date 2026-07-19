@@ -10,6 +10,11 @@ import { deleteCommand } from './commands/delete';
 import { listCommand } from './commands/list';
 import { configCommand } from './commands/config';
 import { vaultsCommand } from './commands/vaults';
+import { tagsCommand } from './commands/tags';
+import { commandsCommand } from './commands/commands';
+import { activeCommand } from './commands/active';
+import { openCommand } from './commands/open';
+import { findCommand } from './commands/find';
 import { instructionsCommand } from './commands/instructions';
 import { excalidrawCreate, excalidrawGet, excalidrawPatch } from './commands/excalidraw';
 import { inboxCommand } from './commands/inbox';
@@ -160,6 +165,59 @@ program
   .option('--use <name>', 'Set the default vault used by all commands')
   .action(async (options) => {
     await vaultsCommand(options);
+  });
+
+// Tags command - list vault tags with counts
+addVaultOption(
+  program
+    .command('tags')
+    .description('List all tags in the vault with usage counts')
+)
+  .action(async (options) => {
+    await tagsCommand(options);
+  });
+
+// Commands command - list or run Obsidian commands
+addVaultOption(
+  program
+    .command('commands')
+    .description('List Obsidian commands, or run one with --run')
+    .option('--run <id>', 'Execute a command by id (e.g. "editor:save-file")')
+)
+  .action(async (options) => {
+    await commandsCommand(options);
+  });
+
+// Active command - get the currently open note
+addVaultOption(
+  program
+    .command('active')
+    .description('Get the note currently open in Obsidian')
+)
+  .action(async (options) => {
+    await activeCommand(options);
+  });
+
+// Open command - open a note in the Obsidian UI
+addVaultOption(
+  program
+    .command('open')
+    .description('Open a note in the Obsidian UI')
+    .argument('<path>', 'Note path')
+)
+  .action(async (path: string, options) => {
+    await openCommand(path, options);
+  });
+
+// Find command - structured search (JsonLogic / Dataview)
+addVaultOption(
+  program
+    .command('find')
+    .description('Structured search via JsonLogic against note metadata')
+    .argument('<query>', 'JsonLogic query as JSON (e.g. \'{"in":["cli",{"var":"tags"}]}\')')
+)
+  .action(async (query: string, options) => {
+    await findCommand(query, options);
   });
 
 // Instructions command

@@ -65,6 +65,11 @@ The default vault resolves to your configured default, else the vault currently 
 Obsidian, else the only usable one. A vault needs the [Local REST API](https://github.com/coddingtonbear/obsidian-local-rest-api)
 plugin enabled to be usable; vaults without it are listed with a reason.
 
+The REST port is **detected per vault** by probing with its API key, so it works even if a
+vault uses a non-default port. Two open vaults can't share a port — if `obsidian vaults`
+shows one as `available: false` with a "port shared" reason, give it a unique port in that
+vault's Local REST API settings.
+
 To override discovery (custom port, key, or omnisearch), add an entry to
 `~/.config/obsidian-cli/config.json` — manual entries take precedence:
 
@@ -244,6 +249,32 @@ obsidian list
 
 # List files in specific directory
 obsidian list "projects/2025"
+```
+
+### Query & Metadata
+
+```bash
+# List all tags with usage counts
+obsidian tags
+
+# Structured search with JsonLogic against note metadata
+obsidian find '{"in":["cli",{"var":"tags"}]}'
+
+# Get the note currently open in Obsidian
+obsidian active
+```
+
+### Obsidian Commands & UI
+
+```bash
+# List available Obsidian command ids
+obsidian commands
+
+# Run a command by id
+obsidian commands --run "editor:save-file"
+
+# Open a note in the Obsidian UI
+obsidian open "note.md"
 ```
 
 ### Config Management

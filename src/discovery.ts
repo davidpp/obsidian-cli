@@ -155,6 +155,52 @@ export async function discoverVaults(registryPath?: string): Promise<DiscoveredV
   return results;
 }
 
+const PROBE_TIMEOUT_MS = 1500;
+const SECURE_SCAN_PORTS = [27124, 27125, 27126, 27127];
+const INSECURE_SCAN_PORTS = [27123, 27125, 27126];
+
+// A vault's server reports whether the supplied key is valid via GET / -> { authenticated }.
+// This has no side effects and needs no open file, so it's a safe liveness+ownership probe.
+export async function probeAuthenticated(baseUrl: string, apiKey: string): Promise<boolean> {
+  try {
+    const opts: RequestInit & { tls?: { rejectUnauthorized: boolean } } = {
+      headers: { Authorization: `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(PROBE_TIMEOUT_MS),
+    };
+    if (baseUrl.startsWith('https')) {
+      opts.tls = { rejectUnauthorized: false };
+    }
+    const res = await fetch(`${baseUrl}/`, opts as RequestInit);
+    if (!res.ok) return false;
+    const data = (await res.json()) as { authenticated?: boolean };
+    return data?.authenticated === true;
+  } catch {
+    return false;
+  }
+}
+
+function candidateBaseUrls(declared: string): string[] {
+  const urls = new Set<string>([declared]);
+  for (const p of SECURE_SCAN_PORTS) urls.add(`https://127.0.0.1:${p}`);
+  for (const p of INSECURE_SCAN_PORTS) urls.add(`http://127.0.0.1:${p}`);
+  return [...urls];
+}
+
+// Find the baseUrl whose server accepts this vault's key. The API key is the vault's
+// identity, so this detects the real port even when two vaults declared the same one.
+export async function resolveEndpoint(
+  apiKey: string,
+  declared: string
+): Promise<{ baseUrl: string; ok: boolean }> {
+  if (!apiKey) return { baseUrl: declared, ok: false };
+  if (await probeAuthenticated(declared, apiKey)) return { baseUrl: declared, ok: true };
+  for (const url of candidateBaseUrls(declared)) {
+    if (url === declared) continue;
+    if (await probeAuthenticated(url, apiKey)) return { baseUrl: url, ok: true };
+  }
+  return { baseUrl: declared, ok: false };
+}
+
 export function discoveredToVaultConfig(d: DiscoveredVault): VaultConfig {
   return {
     restApi: d.restApi ?? { baseUrl: '', apiKey: '' },

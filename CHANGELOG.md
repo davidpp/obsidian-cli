@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- REST port auto-detection — each vault's endpoint is confirmed by probing `GET /`
+  with its API key (the key is the vault's identity), so the CLI uses whichever port
+  actually answers, even non-default ones
+- `obsidian tags` — list all tags with usage counts
+- `obsidian find <jsonlogic>` — structured search against note metadata (JsonLogic)
+- `obsidian active` — get the note currently open in Obsidian
+- `obsidian commands` / `commands --run <id>` — list or run Obsidian commands
+- `obsidian open <path>` — open a note in the Obsidian UI
+
+### Changed
+- `obsidian vaults` now probes each vault, so `available` reflects a real connection
+  and reports its resolved `baseUrl`
+- Two vaults that declare the same REST port are flagged as colliding, with a reason
+  telling you which one to give a unique port
+
 ## [0.3.0] - 2026-07-19
 
 ### Added

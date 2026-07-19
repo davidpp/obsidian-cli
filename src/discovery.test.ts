@@ -2,7 +2,7 @@ import { test, expect, beforeAll, afterAll } from 'bun:test';
 import { mkdtemp, mkdir, writeFile, rm } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { discoverVaults, discoveredToVaultConfig } from './discovery';
+import { discoverVaults, discoveredToVaultConfig, probeAuthenticated, resolveEndpoint } from './discovery';
 
 let root: string;
 let registryPath: string;
@@ -94,6 +94,27 @@ test('discoveredToVaultConfig produces a usable VaultConfig', async () => {
   expect(cfg.restApi.apiKey).toBe('secure-key');
   expect(cfg.vaultPath).toContain('work');
   expect(cfg.omnisearch).toEqual({ enabled: true, baseUrl: 'http://localhost:51361' });
+});
+
+test('probeAuthenticated returns true only when the server accepts the key', async () => {
+  // Mimics the plugin's GET / -> { authenticated } behaviour.
+  const server = Bun.serve({
+    port: 0,
+    fetch(req) {
+      const ok = req.headers.get('authorization') === 'Bearer good-key';
+      return Response.json({ status: 'OK', authenticated: ok });
+    },
+  });
+  const baseUrl = `http://127.0.0.1:${server.port}`;
+  try {
+    expect(await probeAuthenticated(baseUrl, 'good-key')).toBe(true);
+    expect(await probeAuthenticated(baseUrl, 'wrong-key')).toBe(false);
+    expect(await probeAuthenticated('http://127.0.0.1:1', 'good-key')).toBe(false);
+    // Declared endpoint accepts the key, so resolveEndpoint returns it without scanning.
+    expect(await resolveEndpoint('good-key', baseUrl)).toEqual({ baseUrl, ok: true });
+  } finally {
+    server.stop(true);
+  }
 });
 
 test('disambiguates duplicate folder names with an id suffix', async () => {
